@@ -1,10 +1,11 @@
 import SwiftUI
 
-/// Adoption flow: pick a species, name it, grant the two permissions the pet needs to
-/// reach you, then it moves in.
+/// Adoption flow: pick a species, design it, name it, grant the two permissions the pet
+/// needs to reach you, then it moves in.
 struct OnboardingView: View {
     private enum Step: Int, CaseIterable {
         case species
+        case design
         case name
         case permissions
     }
@@ -13,28 +14,45 @@ struct OnboardingView: View {
 
     @State private var step: Step = .species
     @State private var kind: PetKind = .cat
+    @State private var appearance = PetAppearance()
     @State private var name = ""
+    @State private var scout = NearbyNameScout()
 
     private var previewPet: Pet {
-        Pet(name: resolvedName, kind: kind)
+        Pet(name: resolvedName, kind: kind, appearance: appearance)
+    }
+
+    private var palette: PetPalette { appearance.palette(for: kind) }
+
+    /// The species' suggestions, minus any name a pet in the room already answers to.
+    private var availableNames: [String] {
+        kind.suggestedNames.filter { !scout.isTaken($0) }
+    }
+
+    /// What the pet ends up called if the field is left empty. With every suggestion
+    /// spoken for, the species' first name is still better than no name at all.
+    private var defaultName: String {
+        availableNames.first ?? kind.suggestedNames[0]
     }
 
     private var resolvedName: String {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? kind.suggestedNames[0] : trimmed
+        return trimmed.isEmpty ? defaultName : trimmed
     }
 
     var body: some View {
         ZStack {
-            LinearGradient(colors: kind.palette.sky, startPoint: .topLeading, endPoint: .bottomTrailing)
+            LinearGradient(colors: palette.sky, startPoint: .topLeading, endPoint: .bottomTrailing)
                 .ignoresSafeArea()
                 .animation(.easeInOut(duration: 0.5), value: kind)
+                .animation(.easeInOut(duration: 0.35), value: appearance)
 
             VStack(spacing: 0) {
                 ScrollView {
                     VStack(spacing: 24) {
                         switch step {
                         case .species: speciesStep
+                        case .design: designStep
                         case .name: nameStep
                         case .permissions: permissionsStep
                         }
@@ -110,6 +128,27 @@ struct OnboardingView: View {
         }
     }
 
+    private var designStep: some View {
+        VStack(spacing: 20) {
+            VStack(spacing: 8) {
+                Text("Make them yours")
+                    .font(.largeTitle.weight(.bold))
+                    .multilineTextAlignment(.center)
+                Text("Pick a size and some colours. Nothing here is permanent — you can redesign them any time from Settings.")
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+            }
+
+            PetDesignView(
+                kind: $kind,
+                appearance: $appearance,
+                previewName: resolvedName,
+                showsSpecies: false
+            )
+        }
+    }
+
     private var nameStep: some View {
         VStack(spacing: 20) {
             PetFaceView(pet: previewPet)
@@ -119,7 +158,7 @@ struct OnboardingView: View {
             Text("What's their name?")
                 .font(.title2.weight(.bold))
 
-            TextField(kind.suggestedNames[0], text: $name)
+            TextField(defaultName, text: $name)
                 .font(.title3)
                 .multilineTextAlignment(.center)
                 .textInputAutocapitalization(.words)
@@ -129,14 +168,33 @@ struct OnboardingView: View {
                 .padding(.horizontal, 18)
                 .glassEffect(in: .rect(cornerRadius: 18))
 
-            HStack(spacing: 8) {
-                ForEach(kind.suggestedNames, id: \.self) { suggestion in
-                    Button(suggestion) { name = suggestion }
-                        .font(.caption.weight(.semibold))
-                        .buttonStyle(.bordered)
-                        .controlSize(.small)
+            if !availableNames.isEmpty {
+                HStack(spacing: 8) {
+                    ForEach(availableNames, id: \.self) { suggestion in
+                        Button(suggestion) { name = suggestion }
+                            .font(.caption.weight(.semibold))
+                            .buttonStyle(.bordered)
+                            .controlSize(.small)
+                    }
                 }
             }
+
+            if availableNames.count < kind.suggestedNames.count {
+                Text("Names the pets nearby already answer to aren't offered here.")
+                    .font(.caption)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: availableNames)
+        // Browsing only, and only while this step is on screen: there is no pet to put
+        // on the network yet, we just want to hear who else is out there.
+        .onAppear {
+            guard world.preferences.nearbyEnabled else { return }
+            scout.start()
+        }
+        .onDisappear {
+            scout.stop()
         }
     }
 
@@ -144,7 +202,7 @@ struct OnboardingView: View {
         VStack(spacing: 18) {
             Image(systemName: kind.symbolName)
                 .font(.system(size: 54))
-                .foregroundStyle(kind.palette.accent)
+                .foregroundStyle(palette.accent)
 
             Text("Two things \(resolvedName) needs")
                 .font(.title2.weight(.bold))
@@ -194,7 +252,7 @@ struct OnboardingView: View {
         HStack(alignment: .top, spacing: 14) {
             Image(systemName: symbol)
                 .font(.title3)
-                .foregroundStyle(granted ? .green : kind.palette.accent)
+                .foregroundStyle(granted ? .green : palette.accent)
                 .frame(width: 28)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title)
@@ -226,7 +284,7 @@ struct OnboardingView: View {
             HStack(spacing: 6) {
                 ForEach(Step.allCases, id: \.rawValue) { candidate in
                     Capsule()
-                        .fill(candidate == step ? kind.palette.accent : Color.primary.opacity(0.18))
+                        .fill(candidate == step ? palette.accent : Color.primary.opacity(0.18))
                         .frame(width: candidate == step ? 22 : 8, height: 8)
                 }
             }
@@ -255,11 +313,13 @@ struct OnboardingView: View {
     private func advance() {
         switch step {
         case .species:
+            step = .design
+        case .design:
             step = .name
         case .name:
             step = .permissions
         case .permissions:
-            world.adopt(name: resolvedName, kind: kind)
+            world.adopt(name: resolvedName, kind: kind, appearance: appearance)
         }
     }
 }

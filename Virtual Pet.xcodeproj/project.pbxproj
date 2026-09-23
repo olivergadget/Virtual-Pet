@@ -6,39 +6,166 @@
 	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7C56C0053058C6460003EFF7 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C56C0043058C6460003EFF7 /* WidgetKit.framework */; };
+		7C56C0073058C6460003EFF7 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C56C0063058C6460003EFF7 /* SwiftUI.framework */; };
+		7C56C0123058C6480003EFF7 /* PetWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7C56C0023058C6460003EFF7 /* PetWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7C56C03C3058DA4B0003EFF7 /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0363058DA4B0003EFF7 /* Pet.swift */; };
+		7C56C03D3058DA4B0003EFF7 /* Trick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C03A3058DA4B0003EFF7 /* Trick.swift */; };
+		7C56C03E3058DA4B0003EFF7 /* PetFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0383058DA4B0003EFF7 /* PetFaceView.swift */; };
+		7C56C03F3058DA4B0003EFF7 /* PetAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0373058DA4B0003EFF7 /* PetAppearance.swift */; };
+		7C56C0403058DA4B0003EFF7 /* PetKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0393058DA4B0003EFF7 /* PetKind.swift */; };
+		7C56C0413058DA4B0003EFF7 /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0363058DA4B0003EFF7 /* Pet.swift */; };
+		7C56C0423058DA4B0003EFF7 /* Trick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C03A3058DA4B0003EFF7 /* Trick.swift */; };
+		7C56C0433058DA4B0003EFF7 /* PetFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0383058DA4B0003EFF7 /* PetFaceView.swift */; };
+		7C56C0443058DA4B0003EFF7 /* PetAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0373058DA4B0003EFF7 /* PetAppearance.swift */; };
+		7C56C0453058DA4B0003EFF7 /* PetKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0393058DA4B0003EFF7 /* PetKind.swift */; };
+		7C56C05A30596CD50003EFF7 /* PetWatch Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 7C56C05930596CD50003EFF7 /* PetWatch Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7C56C0D330596DB60003EFF7 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C56C0043058C6460003EFF7 /* WidgetKit.framework */; };
+		7C56C0D430596DB60003EFF7 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7C56C0063058C6460003EFF7 /* SwiftUI.framework */; };
+		7C56C0DF30596DB90003EFF7 /* PetWatchWidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 7C56C0D230596DB60003EFF7 /* PetWatchWidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7C56C0F1305977110003EFF7 /* PetSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0F0305977110003EFF7 /* PetSummary.swift */; };
+		7C56C0F2305977110003EFF7 /* PetSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0F0305977110003EFF7 /* PetSummary.swift */; };
+		7C56C1B130596E000003EFF7 /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0363058DA4B0003EFF7 /* Pet.swift */; };
+		7C56C1B230596E000003EFF7 /* PetAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0373058DA4B0003EFF7 /* PetAppearance.swift */; };
+		7C56C1B330596E000003EFF7 /* PetFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0383058DA4B0003EFF7 /* PetFaceView.swift */; };
+		7C56C1B430596E000003EFF7 /* PetKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0393058DA4B0003EFF7 /* PetKind.swift */; };
+		7C56C1B530596E000003EFF7 /* Trick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C03A3058DA4B0003EFF7 /* Trick.swift */; };
+		7C56C1B630596E000003EFF7 /* PetSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0F0305977110003EFF7 /* PetSummary.swift */; };
+		7C56C1B730596E000003EFF7 /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0363058DA4B0003EFF7 /* Pet.swift */; };
+		7C56C1B830596E000003EFF7 /* PetAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0373058DA4B0003EFF7 /* PetAppearance.swift */; };
+		7C56C1B930596E000003EFF7 /* PetFaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0383058DA4B0003EFF7 /* PetFaceView.swift */; };
+		7C56C1BA30596E000003EFF7 /* PetKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0393058DA4B0003EFF7 /* PetKind.swift */; };
+		7C56C1BB30596E000003EFF7 /* Trick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C03A3058DA4B0003EFF7 /* Trick.swift */; };
+		7C56C1BC30596E000003EFF7 /* PetSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C0F0305977110003EFF7 /* PetSummary.swift */; };
+		7C56C1C030596E000003EFF7 /* PetSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C1A130596E000003EFF7 /* PetSync.swift */; };
+		7C56C1C130596E000003EFF7 /* PetSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C56C1A130596E000003EFF7 /* PetSync.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		7C56C0103058C6480003EFF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C56C0013058C6460003EFF7;
+			remoteInfo = PetWidgetsExtension;
+		};
+		7C56C05B30596CD50003EFF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C56C05830596CD50003EFF7;
+			remoteInfo = "PetWatch Watch App";
+		};
+		7C56C0DD30596DB90003EFF7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C56C0D130596DB60003EFF7;
+			remoteInfo = PetWatchWidgetsExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7C56C0173058C6480003EFF7 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				7C56C0123058C6480003EFF7 /* PetWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+		7C56C06730596CD70003EFF7 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolder = Product;
+			files = (
+				7C56C05A30596CD50003EFF7 /* PetWatch Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+		};
+		7C56C0E430596DB90003EFF7 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolder = PlugIns;
+			files = (
+				7C56C0DF30596DB90003EFF7 /* PetWatchWidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* Virtual Pet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Virtual Pet.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C56C0023058C6460003EFF7 /* PetWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PetWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C56C0043058C6460003EFF7 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = /System/Library/Frameworks/WidgetKit.framework; sourceTree = "<absolute>"; };
+		7C56C0063058C6460003EFF7 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = /System/Library/Frameworks/SwiftUI.framework; sourceTree = "<absolute>"; };
+		7C56C02B3058C8020003EFF7 /* PetWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PetWidgetsExtension.entitlements; sourceTree = "<group>"; };
+		7C56C0363058DA4B0003EFF7 /* Pet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pet.swift; sourceTree = "<group>"; };
+		7C56C0373058DA4B0003EFF7 /* PetAppearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetAppearance.swift; sourceTree = "<group>"; };
+		7C56C0383058DA4B0003EFF7 /* PetFaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetFaceView.swift; sourceTree = "<group>"; };
+		7C56C0393058DA4B0003EFF7 /* PetKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetKind.swift; sourceTree = "<group>"; };
+		7C56C03A3058DA4B0003EFF7 /* Trick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trick.swift; sourceTree = "<group>"; };
+		7C56C05930596CD50003EFF7 /* PetWatch Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "PetWatch Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C56C0D230596DB60003EFF7 /* PetWatchWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PetWatchWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C56C0E530596DC70003EFF7 /* PetWatchWidgetsExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PetWatchWidgetsExtension.entitlements; sourceTree = "<group>"; };
+		7C56C0F0305977110003EFF7 /* PetSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetSummary.swift; sourceTree = "<group>"; };
+		7C56C1A130596E000003EFF7 /* PetSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetSync.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7C56C0163058C6480003EFF7 /* Exceptions for "PetWidgets" folder in "PetWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7C56C0013058C6460003EFF7 /* PetWidgetsExtension */;
+		};
+		7C56C0E330596DB90003EFF7 /* Exceptions for "PetWatchWidgets" folder in "PetWatchWidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7C56C0D130596DB60003EFF7 /* PetWatchWidgetsExtension */;
+		};
 		7CDD1C373055A3C6009FBE17 /* Exceptions for "Virtual Pet" folder in "Virtual Pet" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				"Pet Phone",
 			);
 			target = 000000000000000100000000 /* Virtual Pet */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		7CDD1C383055A3C6009FBE17 /* Exceptions for "Virtual Pet" folder in "Compile Sources" phase from "Virtual Pet" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 000000000000000120000000 /* Sources */;
-			membershipExceptions = (
-				"Pet Phone",
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		000000000000000000000010 /* Virtual Pet */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				7CDD1C373055A3C6009FBE17 /* Exceptions for "Virtual Pet" folder in "Virtual Pet" target */,
-				7CDD1C383055A3C6009FBE17 /* Exceptions for "Virtual Pet" folder in "Compile Sources" phase from "Virtual Pet" target */,
 			);
 			path = "Virtual Pet";
+			sourceTree = "<group>";
+		};
+		7C56C0083058C6460003EFF7 /* PetWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7C56C0163058C6480003EFF7 /* Exceptions for "PetWidgets" folder in "PetWidgetsExtension" target */,
+			);
+			path = PetWidgets;
+			sourceTree = "<group>";
+		};
+		7C56C05D30596CD50003EFF7 /* PetWatch Watch App */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "PetWatch Watch App";
+			sourceTree = "<group>";
+		};
+		7C56C0D530596DB60003EFF7 /* PetWatchWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7C56C0E330596DB90003EFF7 /* Exceptions for "PetWatchWidgets" folder in "PetWatchWidgetsExtension" target */,
+			);
+			path = PetWatchWidgets;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -49,13 +176,39 @@
 			files = (
 			);
 		};
+		7C56BFFF3058C6460003EFF7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				7C56C0073058C6460003EFF7 /* SwiftUI.framework in Frameworks */,
+				7C56C0053058C6460003EFF7 /* WidgetKit.framework in Frameworks */,
+			);
+		};
+		7C56C05630596CD50003EFF7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
+		7C56C0CF30596DB60003EFF7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				7C56C0D430596DB60003EFF7 /* SwiftUI.framework in Frameworks */,
+				7C56C0D330596DB60003EFF7 /* WidgetKit.framework in Frameworks */,
+			);
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		000000000000000000000001 = {
 			isa = PBXGroup;
 			children = (
+				7C56C0E530596DC70003EFF7 /* PetWatchWidgetsExtension.entitlements */,
+				7C56C02B3058C8020003EFF7 /* PetWidgetsExtension.entitlements */,
 				000000000000000000000010 /* Virtual Pet */,
+				7C56C0083058C6460003EFF7 /* PetWidgets */,
+				7C56C05D30596CD50003EFF7 /* PetWatch Watch App */,
+				7C56C0D530596DB60003EFF7 /* PetWatchWidgets */,
+				7C56C0033058C6460003EFF7 /* Frameworks */,
+				7C56C03B3058DA4B0003EFF7 /* Shared */,
 				000000000000000000000020 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,8 +217,34 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000120 /* Virtual Pet.app */,
+				7C56C0023058C6460003EFF7 /* PetWidgetsExtension.appex */,
+				7C56C05930596CD50003EFF7 /* PetWatch Watch App.app */,
+				7C56C0D230596DB60003EFF7 /* PetWatchWidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7C56C0033058C6460003EFF7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7C56C0043058C6460003EFF7 /* WidgetKit.framework */,
+				7C56C0063058C6460003EFF7 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7C56C03B3058DA4B0003EFF7 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				7C56C1A130596E000003EFF7 /* PetSync.swift */,
+				7C56C0363058DA4B0003EFF7 /* Pet.swift */,
+				7C56C0373058DA4B0003EFF7 /* PetAppearance.swift */,
+				7C56C0383058DA4B0003EFF7 /* PetFaceView.swift */,
+				7C56C0393058DA4B0003EFF7 /* PetKind.swift */,
+				7C56C03A3058DA4B0003EFF7 /* Trick.swift */,
+				7C56C0F0305977110003EFF7 /* PetSummary.swift */,
+			);
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,8 +257,14 @@
 				000000000000000120000000 /* Sources */,
 				000000000000000130000000 /* Frameworks */,
 				000000000000000140000000 /* Resources */,
+				7C56C0173058C6480003EFF7 /* Embed Foundation Extensions */,
+				7C56C06730596CD70003EFF7 /* Embed Watch Content */,
 			);
 			buildRules = (
+			);
+			dependencies = (
+				7C56C0113058C6480003EFF7 /* PBXTargetDependency */,
+				7C56C05C30596CD50003EFF7 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				000000000000000000000010 /* Virtual Pet */,
@@ -89,6 +274,64 @@
 			productReference = 000000000000000000000120 /* Virtual Pet.app */;
 			productType = "com.apple.product-type.application";
 		};
+		7C56C0013058C6460003EFF7 /* PetWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C56C0133058C6480003EFF7 /* Build configuration list for PBXNativeTarget "PetWidgetsExtension" */;
+			buildPhases = (
+				7C56BFFE3058C6460003EFF7 /* Sources */,
+				7C56BFFF3058C6460003EFF7 /* Frameworks */,
+				7C56C0003058C6460003EFF7 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				7C56C0083058C6460003EFF7 /* PetWidgets */,
+			);
+			name = PetWidgetsExtension;
+			productName = PetWidgetsExtension;
+			productReference = 7C56C0023058C6460003EFF7 /* PetWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		7C56C05830596CD50003EFF7 /* PetWatch Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C56C06430596CD70003EFF7 /* Build configuration list for PBXNativeTarget "PetWatch Watch App" */;
+			buildPhases = (
+				7C56C05530596CD50003EFF7 /* Sources */,
+				7C56C05630596CD50003EFF7 /* Frameworks */,
+				7C56C05730596CD50003EFF7 /* Resources */,
+				7C56C0E430596DB90003EFF7 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7C56C0DE30596DB90003EFF7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				7C56C05D30596CD50003EFF7 /* PetWatch Watch App */,
+			);
+			name = "PetWatch Watch App";
+			productName = "PetWatch Watch App";
+			productReference = 7C56C05930596CD50003EFF7 /* PetWatch Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7C56C0D130596DB60003EFF7 /* PetWatchWidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7C56C0E030596DB90003EFF7 /* Build configuration list for PBXNativeTarget "PetWatchWidgetsExtension" */;
+			buildPhases = (
+				7C56C0CE30596DB60003EFF7 /* Sources */,
+				7C56C0CF30596DB60003EFF7 /* Frameworks */,
+				7C56C0D030596DB60003EFF7 /* Resources */,
+			);
+			buildRules = (
+			);
+			fileSystemSynchronizedGroups = (
+				7C56C0D530596DB60003EFF7 /* PetWatchWidgets */,
+			);
+			name = PetWatchWidgetsExtension;
+			productName = PetWatchWidgetsExtension;
+			productReference = 7C56C0D230596DB60003EFF7 /* PetWatchWidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -96,11 +339,20 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
+				LastSwiftUpdateCheck = 2700;
 				LastUpgradeCheck = 2700;
 				TargetAttributes = {
 					000000000000000100000000 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					7C56C0013058C6460003EFF7 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					7C56C05830596CD50003EFF7 = {
+						CreatedOnToolsVersion = 27.0;
+					};
+					7C56C0D130596DB60003EFF7 = {
+						CreatedOnToolsVersion = 27.0;
 					};
 				};
 			};
@@ -119,6 +371,9 @@
 			projectRoot = "";
 			targets = (
 				000000000000000100000000 /* Virtual Pet */,
+				7C56C0013058C6460003EFF7 /* PetWidgetsExtension */,
+				7C56C05830596CD50003EFF7 /* PetWatch Watch App */,
+				7C56C0D130596DB60003EFF7 /* PetWatchWidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -129,15 +384,89 @@
 			files = (
 			);
 		};
+		7C56C0003058C6460003EFF7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		7C56C05730596CD50003EFF7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		7C56C0D030596DB60003EFF7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		000000000000000120000000 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
+				7C56C1C030596E000003EFF7 /* PetSync.swift in Sources */,
+				7C56C03C3058DA4B0003EFF7 /* Pet.swift in Sources */,
+				7C56C03D3058DA4B0003EFF7 /* Trick.swift in Sources */,
+				7C56C0F2305977110003EFF7 /* PetSummary.swift in Sources */,
+				7C56C03E3058DA4B0003EFF7 /* PetFaceView.swift in Sources */,
+				7C56C03F3058DA4B0003EFF7 /* PetAppearance.swift in Sources */,
+				7C56C0403058DA4B0003EFF7 /* PetKind.swift in Sources */,
+			);
+		};
+		7C56BFFE3058C6460003EFF7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				7C56C0413058DA4B0003EFF7 /* Pet.swift in Sources */,
+				7C56C0423058DA4B0003EFF7 /* Trick.swift in Sources */,
+				7C56C0433058DA4B0003EFF7 /* PetFaceView.swift in Sources */,
+				7C56C0443058DA4B0003EFF7 /* PetAppearance.swift in Sources */,
+				7C56C0453058DA4B0003EFF7 /* PetKind.swift in Sources */,
+				7C56C0F1305977110003EFF7 /* PetSummary.swift in Sources */,
+			);
+		};
+		7C56C05530596CD50003EFF7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				7C56C1C130596E000003EFF7 /* PetSync.swift in Sources */,
+				7C56C1B130596E000003EFF7 /* Pet.swift in Sources */,
+				7C56C1B230596E000003EFF7 /* PetAppearance.swift in Sources */,
+				7C56C1B330596E000003EFF7 /* PetFaceView.swift in Sources */,
+				7C56C1B430596E000003EFF7 /* PetKind.swift in Sources */,
+				7C56C1B530596E000003EFF7 /* Trick.swift in Sources */,
+				7C56C1B630596E000003EFF7 /* PetSummary.swift in Sources */,
+			);
+		};
+		7C56C0CE30596DB60003EFF7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+				7C56C1B730596E000003EFF7 /* Pet.swift in Sources */,
+				7C56C1B830596E000003EFF7 /* PetAppearance.swift in Sources */,
+				7C56C1B930596E000003EFF7 /* PetFaceView.swift in Sources */,
+				7C56C1BA30596E000003EFF7 /* PetKind.swift in Sources */,
+				7C56C1BB30596E000003EFF7 /* Trick.swift in Sources */,
+				7C56C1BC30596E000003EFF7 /* PetSummary.swift in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7C56C0113058C6480003EFF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7C56C0013058C6460003EFF7 /* PetWidgetsExtension */;
+			targetProxy = 7C56C0103058C6480003EFF7 /* PBXContainerItemProxy */;
+		};
+		7C56C05C30596CD50003EFF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7C56C05830596CD50003EFF7 /* PetWatch Watch App */;
+			targetProxy = 7C56C05B30596CD50003EFF7 /* PBXContainerItemProxy */;
+		};
+		7C56C0DE30596DB90003EFF7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7C56C0D130596DB60003EFF7 /* PetWatchWidgetsExtension */;
+			targetProxy = 7C56C0DD30596DB90003EFF7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		000000000000000011000000 /* Debug configuration for PBXProject "Virtual Pet" */ = {
@@ -275,15 +604,21 @@
 		000000000000000111000000 /* Debug configuration for PBXNativeTarget "Virtual Pet" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=iphoneos*]" = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "Virtual Pet/Virtual Pet.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UFX4255LFA;
+				DEVELOPMENT_TEAM = 9B3N5TVPNV;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MyApp/Info.plist;
+				INFOPLIST_FILE = "Virtual Pet/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Pet Phone";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pet Phone uses the camera so you can photograph what you're up to and put your pet on the front of it.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Your pet sniffs out other pets on the same Wi-Fi so they can play together.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your pet uses your location to know where home is and to find other pets hanging out nearby.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -299,7 +634,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "devplaceholder.$(PROJECT_UNIQUE_VALUE:identifier).$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = us.gilman.VPet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -317,15 +652,20 @@
 		000000000000000112000000 /* Release configuration for PBXNativeTarget "Virtual Pet" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = "Virtual Pet/Virtual Pet.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = UFX4255LFA;
+				DEVELOPMENT_TEAM = 9B3N5TVPNV;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = MyApp/Info.plist;
+				INFOPLIST_FILE = "Virtual Pet/Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = "Pet Phone";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pet Phone uses the camera so you can photograph what you're up to and put your pet on the front of it.";
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "Your pet sniffs out other pets on the same Wi-Fi so they can play together.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Your pet uses your location to know where home is and to find other pets hanging out nearby.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -341,7 +681,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "devplaceholder.$(PROJECT_UNIQUE_VALUE:identifier).$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = us.gilman.VPet;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = YES;
 				SDKROOT = auto;
@@ -353,6 +693,232 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
+			};
+			name = Release;
+		};
+		7C56C0143058C6480003EFF7 /* Debug configuration for PBXNativeTarget "PetWidgetsExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = PetWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9B3N5TVPNV;
+				ENABLE_APP_SANDBOX = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PetWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PetWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = us.gilman.VPet.PetWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Debug;
+		};
+		7C56C0153058C6480003EFF7 /* Release configuration for PBXNativeTarget "PetWidgetsExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = PetWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9B3N5TVPNV;
+				ENABLE_APP_SANDBOX = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PetWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PetWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = us.gilman.VPet.PetWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = auto;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2,7";
+				XROS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Release;
+		};
+		7C56C06530596CD70003EFF7 /* Debug configuration for PBXNativeTarget "PetWatch Watch App" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "PetWatch Watch App/PetWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9B3N5TVPNV;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Virtual Pet";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = us.gilman.VPet;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = us.gilman.VPet.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Debug;
+		};
+		7C56C06630596CD70003EFF7 /* Release configuration for PBXNativeTarget "PetWatch Watch App" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "PetWatch Watch App/PetWatch Watch App.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9B3N5TVPNV;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Virtual Pet";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				INFOPLIST_KEY_WKCompanionAppBundleIdentifier = us.gilman.VPet;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = us.gilman.VPet.watchkitapp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
+				WATCHOS_DEPLOYMENT_TARGET = 27.0;
+			};
+			name = Release;
+		};
+		7C56C0E130596DB90003EFF7 /* Debug configuration for PBXNativeTarget "PetWatchWidgetsExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = PetWatchWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9B3N5TVPNV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PetWatchWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PetWatchWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = us.gilman.VPet.watchkitapp.PetWatchWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		7C56C0E230596DB90003EFF7 /* Release configuration for PBXNativeTarget "PetWatchWidgetsExtension" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = PetWatchWidgetsExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9B3N5TVPNV;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = PetWatchWidgets/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = PetWatchWidgets;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = us.gilman.VPet.watchkitapp.PetWatchWidgets;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -372,6 +938,30 @@
 			buildConfigurations = (
 				000000000000000111000000 /* Debug configuration for PBXNativeTarget "Virtual Pet" */,
 				000000000000000112000000 /* Release configuration for PBXNativeTarget "Virtual Pet" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		7C56C0133058C6480003EFF7 /* Build configuration list for PBXNativeTarget "PetWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C56C0143058C6480003EFF7 /* Debug configuration for PBXNativeTarget "PetWidgetsExtension" */,
+				7C56C0153058C6480003EFF7 /* Release configuration for PBXNativeTarget "PetWidgetsExtension" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		7C56C06430596CD70003EFF7 /* Build configuration list for PBXNativeTarget "PetWatch Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C56C06530596CD70003EFF7 /* Debug configuration for PBXNativeTarget "PetWatch Watch App" */,
+				7C56C06630596CD70003EFF7 /* Release configuration for PBXNativeTarget "PetWatch Watch App" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		7C56C0E030596DB90003EFF7 /* Build configuration list for PBXNativeTarget "PetWatchWidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7C56C0E130596DB90003EFF7 /* Debug configuration for PBXNativeTarget "PetWatchWidgetsExtension" */,
+				7C56C0E230596DB90003EFF7 /* Release configuration for PBXNativeTarget "PetWatchWidgetsExtension" */,
 			);
 			defaultConfigurationName = Release;
 		};

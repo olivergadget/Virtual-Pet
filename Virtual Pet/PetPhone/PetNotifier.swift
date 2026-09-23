@@ -57,13 +57,23 @@ final class PetNotifier {
     /// Replaces the whole neglect ladder. Call whenever the pet is cared for, and again
     /// when the app leaves the foreground.
     func rescheduleNeglectLadder(for pet: Pet) {
-        let identifiers = (0..<Self.ladder(for: pet).count).map { Self.neglectPrefix + String($0) }
+        let ladder = Self.ladder(for: pet)
+        let identifiers = (0..<ladder.count).map { Self.neglectPrefix + String($0) }
         center.removePendingNotificationRequests(withIdentifiers: identifiers)
         guard isEnabled, isAuthorized else { return }
 
-        let alreadyElapsed = pet.timeSinceTended
-        for (index, nudge) in Self.ladder(for: pet).enumerated() {
-            let delay = nudge.after - alreadyElapsed
+        let now = Date.now
+        // Every rung is moved out of the sleeping hours before anything is scheduled.
+        let fireDates = ladder.map {
+            Self.wakingMoment(pet.lastTendedAt.addingTimeInterval($0.after), schedule: pet.schedule)
+        }
+
+        for (index, nudge) in ladder.enumerated() {
+            // Rungs that came due overnight all land on the same morning. Only the last
+            // of them is worth sending: waking up to one pointed remark about an empty
+            // bowl is a pet, and waking up to four is an alarm clock.
+            if index + 1 < fireDates.count, fireDates[index + 1] <= fireDates[index] { continue }
+            let delay = fireDates[index].timeIntervalSince(now)
             guard delay > 5 else { continue }
 
             let content = UNMutableNotificationContent()
@@ -87,6 +97,12 @@ final class PetNotifier {
         cancelAbandonmentNudge()
         guard isEnabled, isAuthorized else { return }
 
+        // Putting the phone down at bedtime is not abandonment, so this waits for morning
+        // like everything else does.
+        let fireDate = Self.wakingMoment(Date.now.addingTimeInterval(delay), schedule: pet.schedule)
+        let heldDelay = fireDate.timeIntervalSince(.now)
+        guard heldDelay > 5 else { return }
+
         let content = UNMutableNotificationContent()
         content.title = "\(pet.name) is on their own"
         content.body = Self.abandonmentLine(for: pet)
@@ -97,10 +113,22 @@ final class PetNotifier {
         let request = UNNotificationRequest(
             identifier: Self.abandonmentIdentifier,
             content: content,
-            trigger: UNTimeIntervalNotificationTrigger(timeInterval: delay, repeats: false)
+            trigger: UNTimeIntervalNotificationTrigger(timeInterval: heldDelay, repeats: false)
         )
         center.add(request)
     }
+
+    /// A moment the person is plausibly awake for. Anything falling inside the pet's
+    /// sleeping hours is held over until a little after it wakes up: this app is never
+    /// going to be the reason somebody's phone goes off at three in the morning.
+    private static func wakingMoment(_ date: Date, schedule: PetSchedule) -> Date {
+        guard schedule.phase(at: date) == .asleep,
+              let waking = schedule.nextWaking(after: date) else { return date }
+        return waking.addingTimeInterval(wakingGrace)
+    }
+
+    /// Long enough after the alarm that the pet isn't what goes off first.
+    private static let wakingGrace: TimeInterval = 10 * 60
 
     func cancelAbandonmentNudge() {
         center.removePendingNotificationRequests(withIdentifiers: [Self.abandonmentIdentifier])
@@ -176,6 +204,19 @@ final class PetNotifier {
                 Nudge(after: 36 * hours, title: "\(name) is curled around nothing",
                       body: "A dragon without a keeper is just a very sad lizard.")
             ]
+        case .monkey:
+            return [
+                Nudge(after: 45 * minutes, title: "\(name) has taken something of yours",
+                      body: "It will be returned. Terms are being drawn up."),
+                Nudge(after: 3 * hours, title: "\(name) is hanging off the edge of the screen",
+                      body: "Showing off to an empty room. Come and watch."),
+                Nudge(after: 8 * hours, title: "\(name) has run out of bananas",
+                      body: "The bowl has been inspected twice. Still empty."),
+                Nudge(after: 20 * hours, title: "\(name) has gone very quiet",
+                      body: "No chattering since you left. That's not like them."),
+                Nudge(after: 36 * hours, title: "\(name) is hugging their own tail",
+                      body: "It's the wrong shape. Yours is the right one.")
+            ]
         }
     }
 
@@ -185,6 +226,7 @@ final class PetNotifier {
         case .dog: "\(pet.name) is sitting exactly where you left them. Exactly."
         case .bunny: "\(pet.name) has been very still and very alone."
         case .dragon: "\(pet.name) is cooling off on a cold, flat surface."
+        case .monkey: "\(pet.name) has nothing to hold on to and nobody to pester."
         }
     }
 }

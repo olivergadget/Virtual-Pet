@@ -1,27 +1,6 @@
 import AVFAudio
 import Foundation
 
-/// Every noise the pet can make. Nothing here is a recording — the waveforms are
-/// generated from scratch at launch, so the app ships without a single audio file.
-enum PetSound: String, Sendable, CaseIterable {
-    case purr
-    case snuffle
-    case meow
-    case bark
-    case yip
-    case whine
-    case chirp
-    case trill
-    case squeak
-    case munch
-    case growl
-    case roar
-    case thump
-
-    /// Comfort sounds are built to loop seamlessly; the rest are one-shots.
-    var isLoopable: Bool { self == .purr || self == .snuffle }
-}
-
 // MARK: - Synthesis
 
 /// A tiny software synthesiser. Each function returns mono 32-bit float samples.
@@ -380,7 +359,7 @@ final class PetVoice {
     var overridesSilentSwitch = true {
         didSet {
             guard oldValue != overridesSilentSwitch else { return }
-            configureSession()
+            prepareSession()
         }
     }
 
@@ -391,42 +370,45 @@ final class PetVoice {
     private var cache: [String: AVAudioPCMBuffer] = [:]
     private var isWired = false
     private var loopingSound: PetSound?
+    /// The `overridesSilentSwitch` value the session has been asked to use, if any.
+    private var configuredOverride: Bool?
+    private var isSessionActive = false
+    private var sessionTask: Task<Void, Never>?
+    /// A noise that arrived while the session was still coming up.
+    private var pending: PendingSound?
+
+    /// A playback request held until the engine is running.
+    private enum PendingSound {
+        case oneShot(PetSound, VoiceProfile, Float)
+        case loop(PetSound, VoiceProfile, Float)
+    }
 
     private init() {}
 
     /// Starts (or restarts) the engine. Safe to call as often as you like.
+    ///
+    /// The audio session comes up off the main thread, so on the very first call the
+    /// engine may only start a moment later. Anything played in the meantime is held
+    /// and replayed once it does.
     func activate() {
-        guard isEnabled, let format else { return }
-        configureSession()
-
-        if !isWired {
-            engine.attach(oneShots)
-            engine.attach(comfortLoop)
-            try? engine.connectNode(oneShots, to: engine.mainMixerNode, format: format)
-            try? engine.connectNode(comfortLoop, to: engine.mainMixerNode, format: format)
-            isWired = true
-        }
-
-        guard !engine.isRunning else { return }
-        engine.prepare()
-        do {
-            try engine.start()
-            try oneShots.playAudio()
-            try comfortLoop.playAudio()
-        } catch {
-            // Sound is a bonus, not a requirement — the pet carries on silently.
-        }
+        guard isEnabled, format != nil else { return }
+        prepareSession()
     }
 
     func deactivate() {
         stopComfortLoop()
+        pending = nil
         engine.pause()
     }
 
     func play(_ sound: PetSound, voice: VoiceProfile, volume: Float = 0.9) {
         guard isEnabled else { return }
         activate()
-        guard engine.isRunning, let buffer = buffer(for: sound, voice: voice) else { return }
+        guard engine.isRunning else {
+            pending = .oneShot(sound, voice, volume)
+            return
+        }
+        guard let buffer = buffer(for: sound, voice: voice) else { return }
         oneShots.volume = volume
         // `.interrupts` keeps an over-excited pet from stacking up a queue of barks.
         oneShots.scheduleBuffer(buffer, at: nil, options: .interrupts, completionHandler: nil)
@@ -435,7 +417,11 @@ final class PetVoice {
     func startComfortLoop(_ sound: PetSound, voice: VoiceProfile, volume: Float = 0.8) {
         guard isEnabled else { return }
         activate()
-        guard engine.isRunning, let buffer = buffer(for: sound, voice: voice) else { return }
+        guard engine.isRunning else {
+            pending = .loop(sound, voice, volume)
+            return
+        }
+        guard let buffer = buffer(for: sound, voice: voice) else { return }
 
         if loopingSound == sound {
             comfortLoop.volume = volume
@@ -449,6 +435,8 @@ final class PetVoice {
     }
 
     func stopComfortLoop() {
+        // A loop queued while the session was coming up should never get to start.
+        if case .loop = pending { pending = nil }
         guard loopingSound != nil else { return }
         comfortLoop.stop()
         loopingSound = nil
@@ -488,12 +476,78 @@ final class PetVoice {
         return buffer
     }
 
-    private func configureSession() {
+    /// Brings the audio session up for the current category, then starts the engine.
+    /// `setCategory` and `setActive` can block their caller for long enough to stutter
+    /// the UI, so the work happens off the main thread via the asynchronous API.
+    private func prepareSession() {
         #if os(iOS)
-        let session = AVAudioSession.sharedInstance()
-        let category: AVAudioSession.Category = overridesSilentSwitch ? .playback : .ambient
-        try? session.setCategory(category, mode: .default, options: [.mixWithOthers])
-        try? session.setActive(true)
+        let override = overridesSilentSwitch
+        guard configuredOverride != override else {
+            if isSessionActive { startEngine() }
+            return
+        }
+
+        configuredOverride = override
+        isSessionActive = false
+        // Chain onto any in-flight setup so a category change can't overtake it.
+        let previous = sessionTask
+        sessionTask = Task { [weak self] in
+            await previous?.value
+            await Self.makeSessionActive(overridingSilentSwitch: override)
+            guard let self, self.configuredOverride == override else { return }
+            self.isSessionActive = true
+            self.startEngine()
+        }
+        #else
+        isSessionActive = true
+        startEngine()
         #endif
+    }
+
+    #if os(iOS)
+    private static func makeSessionActive(overridingSilentSwitch override: Bool) async {
+        let category: AVAudioSession.Category = override ? .playback : .ambient
+        await Task.detached(priority: .userInitiated) {
+            let session = AVAudioSession.sharedInstance()
+            try? session.setCategory(category, mode: .default, options: [.mixWithOthers])
+        }.value
+        // The async activation returns immediately and calls back once the session is live.
+        _ = try? await AVAudioSession.sharedInstance().activate()
+    }
+    #endif
+
+    /// Wires up and starts the engine. Only does anything once the session is active.
+    private func startEngine() {
+        guard isEnabled, isSessionActive, let format else { return }
+
+        if !isWired {
+            engine.attach(oneShots)
+            engine.attach(comfortLoop)
+            try? engine.connectNode(oneShots, to: engine.mainMixerNode, format: format)
+            try? engine.connectNode(comfortLoop, to: engine.mainMixerNode, format: format)
+            isWired = true
+        }
+
+        guard !engine.isRunning else { return }
+        engine.prepare()
+        do {
+            try engine.start()
+            try oneShots.playAudio()
+            try comfortLoop.playAudio()
+        } catch {
+            // Sound is a bonus, not a requirement — the pet carries on silently.
+            return
+        }
+
+        switch pending {
+        case .oneShot(let sound, let voice, let volume):
+            pending = nil
+            play(sound, voice: voice, volume: volume)
+        case .loop(let sound, let voice, let volume):
+            pending = nil
+            startComfortLoop(sound, voice: voice, volume: volume)
+        case nil:
+            break
+        }
     }
 }

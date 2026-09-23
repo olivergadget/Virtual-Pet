@@ -1,0 +1,17 @@
+# macOS
+.DS_Store
+
+# Xcode build artifacts
+build/
+DerivedData/
+*.xcarchive
+
+# Per-user Xcode state (xcshareddata is intentionally NOT ignored:
+# Xcode Cloud needs the shared schemes and xcodecloud/manifest.json)
+xcuserdata/
+*.xcuserstate
+*.xcscmblueprint
+
+# Swift Package Manager
+.swiftpm/xcode/package.xcworkspace/xcuserdata/
+.build/

@@ -6,6 +6,14 @@ struct PetHomeView: View {
 
     @State private var lastTouch: CGPoint?
     @State private var gaze: CGSize = .zero
+    @State private var isPlaying = false
+    @State private var isCuddling = false
+    @State private var isFeeding = false
+    @State private var isShowingTricks = false
+    /// Whether the needs are showing what they mean and what to do about them.
+    @State private var isExplainingNeeds = false
+    /// Unfolds the guide by itself until the owner has been through it once.
+    @AppStorage("PetPhone.hasReadNeedsGuide") private var hasReadNeedsGuide = false
 
     var body: some View {
         ZStack {
@@ -13,6 +21,18 @@ struct PetHomeView: View {
             if let pet = world.pet {
                 content(for: pet)
             }
+        }
+        .fullScreenCover(isPresented: $isPlaying) {
+            PlaySessionView()
+        }
+        .fullScreenCover(isPresented: $isCuddling) {
+            CuddleSessionView()
+        }
+        .fullScreenCover(isPresented: $isFeeding) {
+            MealSessionView()
+        }
+        .sheet(isPresented: $isShowingTricks) {
+            TrickBookView()
         }
     }
 
@@ -93,6 +113,8 @@ struct PetHomeView: View {
                 excitement: world.pettingIntensity,
                 gaze: gaze
             )
+            // A trick asked for from the trick book is performed right here.
+            .trickPose(trickPose)
 
             ForEach(world.floatingSymbols) { item in
                 FloatingSymbolView(item: item, tint: pet.palette.accent)
@@ -118,6 +140,14 @@ struct PetHomeView: View {
         .accessibilityLabel("\(pet.name), \(pet.mood.label)")
         .accessibilityHint("Drag to stroke your pet")
         .accessibilityAddTraits(.allowsDirectInteraction)
+    }
+
+    /// How the pet is held partway through a trick, or neutral when it isn't showing off.
+    private var trickPose: TrickPose {
+        guard let trick = world.showOff else { return .neutral }
+        return world.showOffSucceeded
+            ? .performing(trick, progress: world.showOffRoutine)
+            : .fumbling(progress: world.showOffRoutine)
     }
 
     private var pettingGesture: some Gesture {
@@ -162,6 +192,8 @@ struct PetHomeView: View {
 
     private var holdSymbol: String {
         if world.isBeingPetted { return "hand.draw.fill" }
+        // Asleep or out for the day beats anything the phone can tell us about itself.
+        if let phaseSymbol = world.phaseSymbol { return phaseSymbol }
         if world.holdSensor.isFaceDown { return "iphone.slash" }
         if world.holdSensor.isSetDown { return "table.furniture" }
         if world.holdSensor.isHeld { return "hand.raised.fill" }
@@ -172,17 +204,70 @@ struct PetHomeView: View {
 
     private func needsPanel(for pet: Pet) -> some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Needs")
-                .font(.headline)
-            LazyVGrid(columns: [GridItem(spacing: 18), GridItem(spacing: 18)], spacing: 12) {
-                ForEach(NeedKind.allCases) { kind in
-                    NeedMeter(kind: kind, value: pet.needs.value(for: kind))
+            HStack(spacing: 8) {
+                Text("Needs")
+                    .font(.headline)
+                Spacer(minLength: 0)
+                Button {
+                    toggleNeedsGuide()
+                } label: {
+                    Image(systemName: isExplainingNeeds ? "questionmark.circle.fill" : "questionmark.circle")
+                        .font(.title3)
+                        .foregroundStyle(pet.palette.accent)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isExplainingNeeds ? "Hide what the needs mean" : "What do these needs mean?")
+            }
+
+            if isExplainingNeeds {
+                // Explained, the four needs get a column each to themselves: the advice
+                // is no use squeezed into half a phone's width.
+                VStack(alignment: .leading, spacing: 16) {
+                    ForEach(NeedKind.allCases) { kind in
+                        NeedMeter(kind: kind, value: pet.needs.value(for: kind), isExplaining: true)
+                    }
+                }
+            } else {
+                LazyVGrid(columns: [GridItem(spacing: 18), GridItem(spacing: 18)], spacing: 12) {
+                    ForEach(NeedKind.allCases) { kind in
+                        NeedMeter(kind: kind, value: pet.needs.value(for: kind), isExplaining: false)
+                    }
+                }
+            }
+
+            // Someone new to the app gets the guide unfolded for them, and a way to
+            // fold it away once they have read it. After that it is opt-in.
+            if !hasReadNeedsGuide {
+                Divider().opacity(0.4)
+                HStack(spacing: 10) {
+                    Text("Every meter empties on its own. Keep them topped up and \(pet.name) stays happy.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer(minLength: 0)
+                    if isExplainingNeeds {
+                        Button("Got it") { toggleNeedsGuide() }
+                            .font(.caption.weight(.semibold))
+                            .buttonStyle(.glass)
+                            .buttonBorderShape(.capsule)
+                    }
                 }
             }
         }
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .glassEffect(in: .rect(cornerRadius: 22))
+        .onAppear {
+            if !hasReadNeedsGuide { isExplainingNeeds = true }
+        }
+    }
+
+    /// Folding the guide away counts as having read it, so it stops unfolding itself.
+    private func toggleNeedsGuide() {
+        withAnimation(.snappy(duration: 0.28)) {
+            isExplainingNeeds.toggle()
+            if !isExplainingNeeds { hasReadNeedsGuide = true }
+        }
     }
 
     // MARK: Actions
@@ -190,36 +275,57 @@ struct PetHomeView: View {
     private var actions: some View {
         HStack(spacing: 12) {
             Button {
-                world.feed()
+                // A stuffed pet turns the bowl down rather than opening a meal it can't eat.
+                if world.canEat {
+                    isFeeding = true
+                } else {
+                    world.declineFood()
+                }
             } label: {
                 actionLabel("Feed", symbol: "fork.knife")
             }
             .buttonStyle(.glassProminent)
 
             Button {
-                world.playTogether()
+                // A tired pet says no rather than opening a game it won't take part in.
+                if world.canPlay {
+                    isPlaying = true
+                } else {
+                    world.declinePlay()
+                }
             } label: {
                 actionLabel("Play", symbol: "tennisball.fill")
             }
             .buttonStyle(.glass)
 
             Button {
-                world.quickCuddle()
+                // A proper cuddle: stroke them drowsy, then tuck them in.
+                isCuddling = true
             } label: {
                 actionLabel("Cuddle", symbol: "heart.fill")
+            }
+            .buttonStyle(.glass)
+
+            Button {
+                // The trick book: teach a new one, practise an old one, or just ask.
+                isShowingTricks = true
+            } label: {
+                actionLabel("Tricks", symbol: "pawprint.fill")
             }
             .buttonStyle(.glass)
         }
         .controlSize(.large)
     }
 
-    /// Stacked icon and caption, so three buttons fit a narrow phone without truncating.
+    /// Stacked icon and caption, so four buttons fit a narrow phone. The caption is
+    /// allowed to shrink a little rather than truncate to "Cud…".
     private func actionLabel(_ title: String, symbol: String) -> some View {
         VStack(spacing: 5) {
             Image(systemName: symbol)
                 .font(.title3)
             Text(title)
                 .font(.caption.weight(.semibold))
+                .minimumScaleFactor(0.75)
         }
         .lineLimit(1)
         .frame(maxWidth: .infinity)
@@ -271,6 +377,8 @@ struct PetHomeView: View {
 private struct NeedMeter: View {
     let kind: NeedKind
     let value: Double
+    /// When true the meter also says what the need is for and how to top it up.
+    let isExplaining: Bool
 
     private var tint: Color {
         switch value {
@@ -296,15 +404,28 @@ private struct NeedMeter: View {
             ProgressView(value: value)
                 .progressViewStyle(.linear)
                 .tint(tint)
+            if isExplaining {
+                Text(kind.explanation)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, 2)
+                Label(kind.remedy, systemImage: kind.remedySymbolName)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(tint)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(kind.label)
         .accessibilityValue("\(Int(value * 100)) percent")
+        .accessibilityHint(isExplaining ? "\(kind.explanation) \(kind.remedy)" : "")
     }
 }
 
 /// One heart (or crumb, or spark) drifting up off the pet and fading out.
-private struct FloatingSymbolView: View {
+struct FloatingSymbolView: View {
     let item: FloatingSymbol
     let tint: Color
 

@@ -1,16 +1,6 @@
 import Foundation
 import Network
 
-/// The little business card a pet hands over when it meets another pet.
-struct PetCard: Codable, Sendable, Identifiable, Equatable {
-    var id: String
-    var name: String
-    var kind: PetKind
-    var level: Int
-    var moodLabel: String
-    var headline: String
-}
-
 /// Everything one pet can say to another.
 enum PetMessage: Codable, Sendable {
     case hello(PetCard)
@@ -18,6 +8,21 @@ enum PetMessage: Codable, Sendable {
     case treat
     case playInvite
     case playAccept
+    /// A photo of what somebody is up to, with their pet on the front of it. Much the
+    /// largest thing that travels between two phones — see ``PostImage/maximumBytes``.
+    case postcard(PetPostEnvelope)
+    /// Postcards somebody liked. A list rather than a single like, because a phone coming
+    /// into range is told about every like of ours it missed in one go.
+    case postcardLikes([PostLike])
+    /// A like being taken back.
+    case postcardUnlike(postID: String, petID: String)
+    /// "Has anybody got the group this code opens?" The one group message that really is
+    /// a broadcast; the rosters themselves only ever go to members.
+    case groupProbe(String)
+    /// The answer to a probe: here is the group your code opens.
+    case groupOffer(PetGroup)
+    /// A copy of a group's log, for a member to merge with their own.
+    case groupSync(PetGroup)
 }
 
 /// Discovers other people's pets on the same Wi-Fi — or directly over peer-to-peer radio
@@ -38,6 +43,18 @@ final class PetSocial {
 
     /// Called whenever a nearby pet does something our pet should react to.
     var onMessage: ((PetCard, PetMessage) -> Void)?
+    /// Called only the first time a given pet introduces itself, so arriving can be made
+    /// a great deal of while a routine card refresh passes quietly.
+    var onArrival: ((PetCard) -> Void)?
+    /// Called when a postcard arrives. Kept separate from `onMessage` because a postcard
+    /// is for the feed rather than something the pet reacts to on the spot.
+    var onPostcard: ((PetCard, PetPostEnvelope) -> Void)?
+    /// Called when somebody likes a postcard, or takes a like back. For the feed rather
+    /// than the pet — though the pet does hear about applause for its own postcard.
+    var onLike: ((PetCard, PetMessage) -> Void)?
+    /// Called for anything to do with groups: a code being held up, or a roster arriving.
+    /// Bookkeeping between phones, which the pet has no opinion about.
+    var onGroupMessage: ((PetCard, PetMessage) -> Void)?
 
     private var transport: NearbyTransport?
     private var pump: Task<Void, Never>?
@@ -135,18 +152,142 @@ final class PetSocial {
                      symbolName: card.kind.symbolName)
             }
             onMessage?(card, message)
+            if isNew {
+                onArrival?(card)
+            }
             return
         }
 
         guard let card = cardsByPeer[peer] else { return }
-        onMessage?(card, message)
+
+        // A postcard goes straight to the feed, and group traffic straight to the group
+        // store. Neither is something the pet needs to have an opinion about.
+        switch message {
+        case .postcard(let envelope):
+            onPostcard?(card, envelope)
+        case .postcardLikes, .postcardUnlike:
+            onLike?(card, message)
+        case .groupProbe, .groupOffer, .groupSync:
+            onGroupMessage?(card, message)
+        default:
+            onMessage?(card, message)
+        }
     }
 
     // MARK: Helpers
 
     /// Bonjour service names must be unique on the network, so the pet's id is appended.
-    private static func serviceName(for card: PetCard) -> String {
+    fileprivate static func serviceName(for card: PetCard) -> String {
         "\(card.name.prefix(20))-\(card.id.suffix(6))"
+    }
+
+    /// The inverse of `serviceName(for:)`: the pet's name back out of an advertised
+    /// service name. Nil for anything without the id suffix this app puts on the end.
+    fileprivate nonisolated static func petName(fromServiceName serviceName: String) -> String? {
+        guard let separator = serviceName.lastIndex(of: "-") else { return nil }
+        let name = serviceName[serviceName.startIndex..<separator]
+        return name.isEmpty ? nil : String(name)
+    }
+}
+
+// MARK: - Name scout
+
+/// Listens for the pets already on the network so the adoption flow can avoid suggesting
+/// a name one of them answers to.
+///
+/// This only ever browses. A pet's name travels inside its Bonjour service name, so there
+/// is nothing to dial and nothing to connect to — which matters here, because during
+/// adoption there is no pet of our own to announce yet.
+@Observable
+final class NearbyNameScout {
+    /// Lowercased names of every pet currently in range.
+    private(set) var takenNames: Set<String> = []
+
+    private var browser: NameBrowser?
+    private var pump: Task<Void, Never>?
+
+    /// Safe to call again while already looking.
+    func start() {
+        guard browser == nil else { return }
+        let browser = NameBrowser()
+        self.browser = browser
+        pump = Task { [weak self] in
+            for await names in browser.names {
+                self?.takenNames = names
+            }
+        }
+        browser.start()
+    }
+
+    func stop() {
+        pump?.cancel()
+        pump = nil
+        browser?.stop()
+        browser = nil
+        takenNames = []
+    }
+
+    /// True when a pet in range already answers to this name.
+    func isTaken(_ name: String) -> Bool {
+        takenNames.contains(name.lowercased())
+    }
+}
+
+/// A Bonjour browser and nothing else — no listener, so running one doesn't put a pet on
+/// the network before there is a pet to put there.
+///
+/// Callbacks arrive on a private queue, so this lives outside the main actor and publishes
+/// a plain `Sendable` set of names.
+///
+/// Unchecked: `browser` is only touched by `start()` and `stop()`, both called from the
+/// main actor, and by `deinit`.
+private nonisolated final class NameBrowser: @unchecked Sendable {
+    let names: AsyncStream<Set<String>>
+
+    private let continuation: AsyncStream<Set<String>>.Continuation
+    private let queue = DispatchQueue(label: "PetPhone.nameScout")
+    private var browser: NWBrowser?
+
+    init() {
+        let (stream, continuation) = AsyncStream.makeStream(of: Set<String>.self)
+        self.names = stream
+        self.continuation = continuation
+    }
+
+    deinit {
+        browser?.cancel()
+        continuation.finish()
+    }
+
+    func start() {
+        let browser = NWBrowser(
+            for: .bonjour(type: NearbyTransport.serviceType, domain: nil),
+            using: NearbyTransport.makeParameters()
+        )
+        browser.browseResultsChangedHandler = { [weak self] results, _ in
+            self?.publish(results)
+        }
+        // A browse that never gets going simply finds nobody, which leaves every
+        // suggestion on offer — exactly where the naming step starts from.
+        browser.start(queue: queue)
+        self.browser = browser
+    }
+
+    func stop() {
+        browser?.cancel()
+        browser = nil
+        continuation.finish()
+    }
+
+    private func publish(_ results: Set<NWBrowser.Result>) {
+        var found: Set<String> = []
+        for result in results {
+            guard case .service(let serviceName, _, _, _) = result.endpoint,
+                  let name = PetSocial.petName(fromServiceName: serviceName)
+            else { continue }
+            found.insert(name.lowercased())
+        }
+        continuation.yield(found)
     }
 }
 
@@ -212,7 +353,7 @@ private nonisolated final class NearbyTransport: @unchecked Sendable {
         self.localName = localName
     }
 
-    private static func makeParameters() -> NWParameters {
+    fileprivate static func makeParameters() -> NWParameters {
         let parameters = NWParameters.tcp
         // The bit that makes two phones work on a train with no Wi-Fi.
         parameters.includePeerToPeer = true

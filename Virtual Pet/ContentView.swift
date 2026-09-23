@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Root router: adoption flow until there's a pet, then the three tabs.
+/// Root router: adoption flow until there's a pet, then the four tabs.
 struct ContentView: View {
     @Environment(PetWorld.self) private var world
 
@@ -10,6 +10,11 @@ struct ContentView: View {
                 TabView {
                     Tab("Pet", systemImage: "heart.fill") {
                         PetHomeView()
+                    }
+                    Tab("Out & About", systemImage: "figure.walk.motion") {
+                        NavigationStack {
+                            OutAndAboutView()
+                        }
                     }
                     Tab("Playdates", systemImage: "dot.radiowaves.left.and.right") {
                         NavigationStack {
@@ -26,9 +31,23 @@ struct ContentView: View {
                 OnboardingView()
             }
         }
+        // Presented from the root rather than the pet screen, so a friend turning up
+        // takes over whichever tab is open.
+        .fullScreenCover(item: reunion) { cast in
+            ReunionView(cast: cast)
+        }
         .task {
             await world.start()
             await requestStartupPermissions()
+        }
+    }
+
+    /// The reunion waiting to be shown, if nothing else has the screen.
+    private var reunion: Binding<ReunionCast?> {
+        Binding {
+            world.isBusyWithSession ? nil : world.reunion
+        } set: { newValue in
+            if newValue == nil { world.cancelReunion() }
         }
     }
 
