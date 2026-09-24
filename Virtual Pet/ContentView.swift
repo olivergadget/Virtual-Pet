@@ -1,12 +1,15 @@
 import SwiftUI
 
-/// Root router: adoption flow until there's a pet, then the four tabs.
+/// Root router: sign-in until there's an owner, adoption until there's a pet, then the
+/// four tabs.
 struct ContentView: View {
     @Environment(PetWorld.self) private var world
 
     var body: some View {
         Group {
-            if world.hasPet {
+            if !world.owner.isSignedIn {
+                SignInView()
+            } else if world.hasPet {
                 TabView {
                     Tab("Pet", systemImage: "heart.fill") {
                         PetHomeView()
@@ -37,7 +40,14 @@ struct ContentView: View {
             ReunionView(cast: cast)
         }
         .task {
+            // Asked first: access withdrawn in Settings while the app was closed should
+            // put the gate back up rather than let somebody through on a dead credential.
+            await world.owner.refresh()
             await world.start()
+        }
+        // Re-run when the gate opens, so a returning owner who had to sign in again is
+        // still asked for anything the pet is missing.
+        .task(id: world.owner.isSignedIn) {
             await requestStartupPermissions()
         }
     }
@@ -52,8 +62,9 @@ struct ContentView: View {
     }
 
     /// Returning players get both prompts at launch; new ones get them during adoption.
+    /// Neither is asked for behind the sign-in gate, where there is nothing to grant to.
     private func requestStartupPermissions() async {
-        guard world.hasPet else { return }
+        guard world.owner.isSignedIn, world.hasPet else { return }
         if world.notifier.authorization == .notDetermined {
             await world.notifier.requestAuthorization()
         }

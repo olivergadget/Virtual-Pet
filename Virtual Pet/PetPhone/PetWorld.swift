@@ -45,6 +45,9 @@ final class PetWorld {
     var preferences: Preferences
 
     let holdSensor = HoldSensor()
+    /// The person the pet belongs to. Nothing in the app is reachable until they have
+    /// signed in, and a pet stops reaching out the moment they sign out.
+    let owner = PetOwner()
     let notifier = PetNotifier()
     let locator = PetLocator()
     let social = PetSocial()
@@ -136,10 +139,14 @@ final class PetWorld {
             self?.runErrand(errand)
         }
         watch.currentPet = { [weak self] in self?.pet }
+
+        owner.onChange = { [weak self] in
+            self?.ownerDidChange()
+        }
         PetVoice.shared.isEnabled = preferences.soundEnabled
         PetVoice.shared.overridesSilentSwitch = preferences.overridesSilentSwitch
         PetHaptics.shared.isEnabled = preferences.hapticsEnabled
-        notifier.isEnabled = preferences.notificationsEnabled
+        refreshNotifierEnablement()
     }
 
     var hasPet: Bool { pet != nil }
@@ -179,6 +186,9 @@ final class PetWorld {
             startNearbyIfNeeded()
             watch.activate()
             Task { await notifier.refreshAuthorization() }
+            // Access can be withdrawn from Settings while the app is in the background,
+            // and coming back to the foreground is the first chance to notice.
+            Task { await owner.refresh() }
             greet()
 
         case .background:
@@ -219,7 +229,7 @@ final class PetWorld {
         PetVoice.shared.isEnabled = preferences.soundEnabled
         PetVoice.shared.overridesSilentSwitch = preferences.overridesSilentSwitch
         PetHaptics.shared.isEnabled = preferences.hapticsEnabled
-        notifier.isEnabled = preferences.notificationsEnabled
+        refreshNotifierEnablement()
 
         if !preferences.soundEnabled { PetVoice.shared.stopComfortLoop() }
         if !preferences.hapticsEnabled { PetHaptics.shared.stopPurr() }
@@ -235,6 +245,44 @@ final class PetWorld {
                 notifier.cancelEverything()
             }
         }
+    }
+
+    // MARK: The owner
+
+    /// The gate opened or closed. Logging out costs nothing: the pet, its bond, its
+    /// friends, its tricks and every postcard are written to disk and picked up again on
+    /// the way back in. What does stop is the pet reaching out — no nudges, and nothing
+    /// on the local network under a name that has no owner behind it.
+    private func ownerDidChange() {
+        refreshNotifierEnablement()
+        if owner.isSignedIn {
+            startNearbyIfNeeded()
+            if let pet {
+                notifier.rescheduleNeglectLadder(for: pet)
+                // Back on the wrist, from the phone's copy — which is the only one that
+                // was ever authoritative.
+                watch.share(pet, force: true)
+            }
+        } else {
+            endPetting()
+            // Written out before anything else, and not on the usual short delay: a pet
+            // about to go behind the gate should be on disk to the second.
+            persist()
+            social.stop()
+            notifier.cancelEverything()
+            PetVoice.shared.stopComfortLoop()
+            // The watch has no gate of its own, so a pet left on the wrist would walk
+            // straight around this one. Its copy is only ever a mirror of the phone's,
+            // and it comes back the moment somebody logs in again.
+            watch.shareRelease()
+        }
+    }
+
+    /// The notifier's one switch, which every scheduling path checks before it puts
+    /// anything in the queue. Kept in one place so a nudge can't slip out on a later tick
+    /// while the pet is sitting behind the sign-in screen.
+    private func refreshNotifierEnablement() {
+        notifier.isEnabled = owner.isSignedIn && preferences.notificationsEnabled
     }
 
     // MARK: Adoption and settings
@@ -1263,7 +1311,7 @@ final class PetWorld {
     }
 
     private func startNearbyIfNeeded() {
-        guard hasStarted, preferences.nearbyEnabled, let petCard else {
+        guard hasStarted, owner.isSignedIn, preferences.nearbyEnabled, let petCard else {
             social.stop()
             return
         }

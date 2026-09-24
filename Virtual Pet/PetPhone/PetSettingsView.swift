@@ -8,7 +8,7 @@ struct PetSettingsView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var draftName = ""
-    @State private var isConfirmingRelease = false
+    @State private var isConfirmingSignOut = false
     /// The icon set on the Home Screen. Read from the system rather than observed, so it is
     /// refreshed by hand whenever the icon might have changed.
     @State private var iconName: String?
@@ -151,7 +151,7 @@ struct PetSettingsView: View {
             } header: {
                 Text("Nearby")
             } footer: {
-                Text("Uses the local network only. Nothing is uploaded and no account is needed. With postcards off you can still make them — they just stay on this phone.")
+                Text("Uses the local network only. Nothing is uploaded, and your Apple ID is never part of what the pets nearby hand each other. With postcards off you can still make them — they just stay on this phone.")
             }
 
             Section {
@@ -176,12 +176,23 @@ struct PetSettingsView: View {
                 Text("Your pet uses a rough sense of home so it can tell when you're out. Coordinates stay on this device.")
             }
 
-            if world.hasPet {
-                Section {
-                    Button("Say goodbye…", role: .destructive) {
-                        isConfirmingRelease = true
-                    }
+            Section {
+                LabeledContent("Apple ID") {
+                    Text(world.owner.displayName ?? "Name withheld")
+                        .foregroundStyle(.secondary)
                 }
+            } header: {
+                Text("Owner")
+            } footer: {
+                Text("\(world.pet?.name ?? "Your pet") belongs to this Apple ID. Nothing about it is uploaded or shared — it's kept in this phone's Keychain so the app knows who you are between launches.")
+            }
+
+            Section {
+                Button("Log out…") {
+                    isConfirmingSignOut = true
+                }
+            } footer: {
+                Text("Nothing is lost. \(world.pet?.name ?? "Your pet") is saved exactly as they are — bond, friends, tricks and postcards and all — and is waiting when you log back in.")
             }
         }
         .navigationTitle("Settings")
@@ -193,16 +204,16 @@ struct PetSettingsView: View {
             world.applyPreferences()
         }
         .confirmationDialog(
-            "Let \(world.pet?.name ?? "your pet") go?",
-            isPresented: $isConfirmingRelease,
+            "Log out?",
+            isPresented: $isConfirmingSignOut,
             titleVisibility: .visible
         ) {
-            Button("Say goodbye", role: .destructive) {
-                world.releasePet()
+            Button("Log out") {
+                world.owner.signOut()
             }
-            Button("Keep them", role: .cancel) {}
+            Button("Stay logged in", role: .cancel) {}
         } message: {
-            Text("Their bond, friends and level are erased. You can adopt again straight away.")
+            Text("\(world.pet?.name ?? "Your pet") is saved and waits behind the sign-in screen. They'll stop nudging you until you're back.")
         }
     }
 
